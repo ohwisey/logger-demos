@@ -1,0 +1,78 @@
+THE LIVING LOGGER BUILD PROMPT (through episode 3: The exercise library that teaches you as you build your session)
+
+Paste this into Claude Code to build the workout logger yourself: one file, no
+account, no server. Build the sections top to bottom, in order.
+
+====================================================================
+
+## chart
+
+EPISODE 1, PROGRESSIVE OVERLOAD, region "chart"
+
+Build a single HTML file: a weight-over-time line chart for one exercise, on a
+near-black background with a soft mint line and an editorial serif font. Add a gentle
+area fill under the line, light gridlines, and the dates on the x-axis. Make it look
+premium and calm.
+
+Then make it real: a scrub you can drag across the line to read any session (weight,
+top set, change versus last time), a best-session marker in gold, a range switcher
+(week, month, 3 months, all), a stats row (sessions, last 30 days, best), and a small
+"beat it next session" nudge under the best. Under the chart, show the sets from any
+past session, and let me log or edit a past session by hand: date, weight, reps, per
+set, with a rest or deload toggle.
+
+Save every session in the browser so it survives a reload, and seed it with a handful
+of past sessions so the line looks alive on first open. No account, no cloud, no
+internet needed.
+
+## logger
+
+EPISODE 2, THE WORKOUT LOGGER, region "logger"
+
+Now build a single-file workout logger I can open in my browser. One page, dark, calm,
+premium, same look as the chart.
+
+Each lift is a card: its name, and a row for every set with the weight and target reps.
+I tap "hit it" when I make a set, or "miss" when I do not. The row reacts the instant I
+log it: it lights up mint when I beat last time, stays a quiet amber when I fall short,
+never a harsh red, and always shows the exact target to beat next time. A bar at the top
+counts how many sets I have logged.
+
+Let me add a lift by just typing its name. Let me reorder lifts. If I remove a lift,
+hide it, never delete its history, so I can bring it back with every old set intact.
+
+Give each lift a "history" button that opens the Episode 1 chart for that exact lift,
+drawn from these same sets, so logging a workout and seeing the line climb are one loop.
+Give each lift a progressive-overload star: before I lift, I can arm a push for today
+(one more rep, or a little more weight), and it seeds the set rows. When I finish the
+session, today's sets become a saved session, the chart grows, and a calm celebration
+tells me what I did and any new best.
+
+Save everything in the browser so it is still there when I come back. Seed it with a few
+real lifts so it feels alive on first open. Make it feel like an app I would pay for.
+
+## library
+
+EPISODE 3, THE EXERCISE LIBRARY, region "library"
+
+Now add a single-file exercise library to the same logger. Keep the look: pure black
+background, white and soft grey text, with one mint green as the only accent color. A
+classy serif for the titles, a clean sans for everything else. Rounded cards, lots of
+breathing room, calm and premium, no other bright colors.
+
+Show every move grouped by the muscle it trains, with a search box at the top. I tap a
+move to add it to today's session, tap again to remove it. If I search for something
+that is not there, let me add my own by name from the same box. Each move has its own
+card: a picture, three short steps to do it right, and a couple of cues that matter,
+plus its tier and the muscles it works.
+
+Wire the logger's "add a lift" button to open this library, and wire each lift's "swap"
+to open the same library in swap mode: when I pick the new move it takes the old one's
+place and keeps my weight, no duplicate, and starts its own clean history. Give me a kg
+and lb toggle in the corner: store one unit, convert at the edge, and let plus and minus
+step by a clean plate while the middle stays a number I can type.
+
+Everything a move adds writes through the same store as the rest of the logger, so a
+pick saves the instant I make it, and a move I removed comes back with its full history.
+Save everything in the browser so it is still there when I come back. Seed it with real
+moves so it feels alive on first open. Make it feel like an app I would pay for.

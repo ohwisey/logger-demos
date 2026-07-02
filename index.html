@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Living Logger series</title>
+<style>
+  :root { --bg:#04140d; --mint:#7CF5C4; --ink:#eafff6; --muted:#8fb3a6; --card:#0a2018; --line:rgba(124,245,196,.14); }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#000; color:var(--ink); font:16px/1.55 Inter,system-ui,-apple-system,sans-serif; padding:64px 20px 96px; }
+  .wrap { max-width:760px; margin:0 auto; }
+  .eyebrow { color:var(--mint); font-size:12px; letter-spacing:.22em; text-transform:uppercase; font-weight:600; }
+  h1 { font-size:34px; line-height:1.15; margin:14px 0 10px; font-weight:700; }
+  .lede { color:var(--muted); font-size:17px; margin:0 0 40px; max-width:60ch; }
+  ul { list-style:none; margin:0; padding:0; display:grid; gap:18px; }
+  .ep { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px 24px 20px; }
+  .ep-num { color:var(--mint); font-size:12px; letter-spacing:.14em; text-transform:uppercase; font-weight:600; }
+  .ep-title { font-size:19px; line-height:1.3; margin:8px 0 18px; font-weight:600; }
+  .ep-links { display:flex; flex-wrap:wrap; gap:10px; }
+  .link { display:inline-block; padding:9px 15px; border:1px solid var(--line); border-radius:999px; color:var(--ink); text-decoration:none; font-size:14px; font-weight:500; transition:border-color .15s, color .15s, background .15s; }
+  .link:hover { border-color:var(--mint); color:var(--mint); background:rgba(124,245,196,.06); }
+  .foot { color:var(--muted); font-size:13px; margin-top:48px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="eyebrow">Vitality</div>
+    <h1>The Living Logger series</h1>
+    <p class="lede">A workout logger built one brick at a time. Each episode ships a free demo you can play with, the build prompt to make it yourself, and a kit to download.</p>
+    <ul>
+      <li class="ep">
+        <div class="ep-num">Episode 1</div>
+        <h2 class="ep-title">Progressive overload: a tracker that proves you are winning</h2>
+        <div class="ep-links">
+          <a class="link" href="./ep1/demo.html">Play the demo</a>
+          <a class="link" href="./ep1/first-prompt.txt">Free build prompt</a>
+          <a class="link" href="./ep1/ep1-free.zip">Download the kit</a>
+        </div>
+      </li>
+      <li class="ep">
+        <div class="ep-num">Episode 2</div>
+        <h2 class="ep-title">The workout logger that grades every set the moment you log it</h2>
+        <div class="ep-links">
+          <a class="link" href="./ep2/demo.html">Play the demo</a>
+          <a class="link" href="./ep2/first-prompt.txt">Free build prompt</a>
+          <a class="link" href="./ep2/ep2-free.zip">Download the kit</a>
+        </div>
+      </li>
+      <li class="ep">
+        <div class="ep-num">Episode 3</div>
+        <h2 class="ep-title">The exercise library that teaches you as you build your session</h2>
+        <div class="ep-links">
+          <a class="link" href="./ep3/demo.html">Play the demo</a>
+          <a class="link" href="./ep3/first-prompt.txt">Free build prompt</a>
+          <a class="link" href="./ep3/ep3-free.zip">Download the kit</a>
+        </div>
+      </li>
+    </ul>
+    <p class="foot">Every kit is a zip of the demo, the build prompt, and a basic Supabase setup so your own logger can save.</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+THE LIVING LOGGER BUILD PROMPT (through episode 1: Progressive overload: a tracker that proves you are winning)
+
+Paste this into Claude Code to build the workout logger yourself: one file, no
+account, no server. Build the sections top to bottom, in order.
+
+====================================================================
+
+## chart
+
+EPISODE 1, PROGRESSIVE OVERLOAD, region "chart"
+
+Build a single HTML file: a weight-over-time line chart for one exercise, on a
+near-black background with a soft mint line and an editorial serif font. Add a gentle
+area fill under the line, light gridlines, and the dates on the x-axis. Make it look
+premium and calm.
+
+Then make it real: a scrub you can drag across the line to read any session (weight,
+top set, change versus last time), a best-session marker in gold, a range switcher
+(week, month, 3 months, all), a stats row (sessions, last 30 days, best), and a small
+"beat it next session" nudge under the best. Under the chart, show the sets from any
+past session, and let me log or edit a past session by hand: date, weight, reps, per
+set, with a rest or deload toggle.
+
+Save every session in the browser so it survives a reload, and seed it with a handful
+of past sessions so the line looks alive on first open. No account, no cloud, no
+internet needed.
