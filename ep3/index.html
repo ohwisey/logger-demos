@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The exercise library that teaches you as you build your session · Free Build Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#000; --fg:#fff; --mint:#6EE7B7; --mint-cool:#A7F3D0; --mint-hover:#5dd6a6;
+    --muted:rgba(255,255,255,.5); --muted-strong:rgba(255,255,255,.74); --rule:rgba(255,255,255,.1);
+    --panel:rgba(255,255,255,.02); --bar:rgba(255,255,255,.035);
+    --sans:'Inter',system-ui,sans-serif; --serif:'Instrument Serif',Georgia,serif; --mono:'JetBrains Mono',monospace;
+    --spring:cubic-bezier(.34,1.56,.64,1);
+  }
+  *{box-sizing:border-box}
+  html,body{background:var(--bg);margin:0;min-height:100%}
+  body{font-family:var(--sans);color:var(--fg);-webkit-font-smoothing:antialiased;
+    display:flex;justify-content:center;padding:clamp(40px,10vh,90px) 22px}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;
+    background:radial-gradient(110% 70% at 50% -10%, rgba(110,231,183,.08), transparent 55%);}
+  .wrap{position:relative;width:100%;max-width:620px;animation:rise .6s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--mint);margin:0 0 12px}
+  h1{font-family:var(--serif);font-style:italic;font-weight:400;font-size:clamp(2.4rem,8vw,3.4rem);line-height:1;letter-spacing:-.02em;margin:0}
+  .sub{color:var(--muted-strong);font-size:16px;line-height:1.55;margin:14px 0 0}
+
+  .kit-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .chip{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--mint-cool);
+    border:1px solid rgba(167,243,208,.28);border-radius:999px;padding:6px 11px;background:rgba(110,231,183,.05)}
+
+  .file{margin-top:20px;border:1px solid var(--rule);border-radius:16px;overflow:hidden;background:var(--panel)}
+  .file-bar{display:flex;align-items:center;justify-content:space-between;
+    padding:12px 16px;background:var(--bar);border-bottom:1px solid var(--rule);cursor:pointer;user-select:none}
+  .fname{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:13px;font-weight:500;color:var(--fg)}
+  .fname svg{width:15px;height:15px;color:var(--mint);flex:none}
+  .fname .n{color:var(--muted);margin-right:2px}
+  .ftag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--muted);
+    border:1px solid var(--rule);border-radius:6px;padding:3px 7px}
+  .bar-right{display:flex;align-items:center;gap:10px}
+  .chev{width:16px;height:16px;color:var(--muted);transition:transform .3s var(--spring)}
+  .file.open .chev{transform:rotate(90deg)}
+  .file-body{max-height:0;overflow:hidden;padding:0 18px;transition:max-height .38s ease,padding .3s ease}
+  .file.open .file-body{max-height:1400px;padding:18px 18px 4px}
+  .prompt{white-space:pre-wrap;font-size:14.5px;line-height:1.7;color:var(--muted-strong);margin:0}
+  .prompt .first{color:var(--fg)}
+  .file-actions{display:flex;gap:10px;padding:16px 18px 18px}
+
+  .btn{flex:1;border:none;border-radius:12px;font-family:var(--sans);font-weight:600;font-size:15px;
+    padding:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+    transition:transform .18s var(--spring),background .2s,border-color .2s}
+  .btn svg{width:16px;height:16px;flex:none}
+  .btn:active{transform:scale(.98)}
+  .btn.primary{background:var(--mint);color:#04140d}
+  .btn.primary:hover{background:var(--mint-hover)}
+  .btn.ghost{background:transparent;color:var(--mint-cool);border:1px solid rgba(167,243,208,.3)}
+  .btn.ghost:hover{background:rgba(167,243,208,.08);border-color:var(--mint-cool)}
+  .btn.wide{width:100%;flex:none;margin-top:20px;padding:16px}
+
+  .foot{margin-top:26px;text-align:center;color:var(--muted);font-size:15px;line-height:1.5}
+  .foot a{color:var(--mint-cool);text-decoration:none;font-weight:500;border-bottom:1px solid rgba(167,243,208,.3)}
+  .foot a:hover{border-color:var(--mint-cool)}
+  .demo-row{margin-top:18px}
+  .demo-link{display:inline-flex;width:auto;flex:none;text-decoration:none}
+</style>
+</head>
+<body>
+    <main class="wrap">
+    <p class="eyebrow">Free build kit</p>
+    <h1>The exercise library that teaches you as you build your session</h1>
+    <p class="sub">A single-file exercise library that teaches each move as you build your session. The whole thing to build yourself and back up to the cloud.</p>
+
+    <div class="kit-meta">
+      <span class="chip">2 files</span>
+      <span class="chip">Build + Supabase backup</span>
+      <span class="chip">about 10 minutes</span>
+    </div>
+
+    <div class="demo-row">
+    <a class="btn ghost demo-link" href="./demo.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Play the demo
+    </a>
+    </div>
+
+    <div class="file">
+      <div class="file-bar" data-toggle>
+        <span class="fname"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M13 2v7h7"/></svg><span class="n">01</span> build-the-library.txt</span>
+        <span class="bar-right"><span class="ftag">PROMPT</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </div>
+      <div class="file-body">
+        <p class="prompt" data-prompt>THE LIVING LOGGER BUILD PROMPT (through episode 3: The exercise library that teaches you as you build your session)
+
+Paste this into Claude Code to build the workout logger yourself: one file, no
+account, no server. Build the sections top to bottom, in order.
+
+====================================================================
+
+## chart
+
+EPISODE 1, PROGRESSIVE OVERLOAD, region &quot;chart&quot;
+
+Build a single HTML file: a weight-over-time line chart for one exercise, on a
+near-black background with a soft mint line and an editorial serif font. Add a gentle
+area fill under the line, light gridlines, and the dates on the x-axis. Make it look
+premium and calm.
+
+Then make it real: a scrub you can drag across the line to read any session (weight,
+top set, change versus last time), a best-session marker in gold, a range switcher
+(week, month, 3 months, all), a stats row (sessions, last 30 days, best), and a small
+&quot;beat it next session&quot; nudge under the best. Under the chart, show the sets from any
+past session, and let me log or edit a past session by hand: date, weight, reps, per
+set, with a rest or deload toggle.
+
+Save every session in the browser so it survives a reload, and seed it with a handful
+of past sessions so the line looks alive on first open. No account, no cloud, no
+internet needed.
+
+## logger
+
+EPISODE 2, THE WORKOUT LOGGER, region &quot;logger&quot;
+
+Now build a single-file workout logger I can open in my browser. One page, dark, calm,
+premium, same look as the chart.
+
+Each lift is a card: its name, and a row for every set with the weight and target reps.
+I tap &quot;hit it&quot; when I make a set, or &quot;miss&quot; when I do not. The row reacts the instant I
+log it: it lights up mint when I beat last time, stays a quiet amber when I fall short,
+never a harsh red, and always shows the exact target to beat next time. A bar at the top
+counts how many sets I have logged.
+
+Let me add a lift by just typing its name. Let me reorder lifts. If I remove a lift,
+hide it, never delete its history, so I can bring it back with every old set intact.
+
+Give each lift a &quot;history&quot; button that opens the Episode 1 chart for that exact lift,
+drawn from these same sets, so logging a workout and seeing the line climb are one loop.
+Give each lift a progressive-overload star: before I lift, I can arm a push for today
+(one more rep, or a little more weight), and it seeds the set rows. When I finish the
+session, today's sets become a saved session, the chart grows, and a calm celebration
+tells me what I did and any new best.
+
+Save everything in the browser so it is still there when I come back. Seed it with a few
+real lifts so it feels alive on first open. Make it feel like an app I would pay for.
+
+## library
+
+EPISODE 3, THE EXERCISE LIBRARY, region &quot;library&quot;
+
+Now add a single-file exercise library to the same logger. Keep the look: pure black
+background, white and soft grey text, with one mint green as the only accent color. A
+classy serif for the titles, a clean sans for everything else. Rounded cards, lots of
+breathing room, calm and premium, no other bright colors.
+
+Show every move grouped by the muscle it trains, with a search box at the top. I tap a
+move to add it to today's session, tap again to remove it. If I search for something
+that is not there, let me add my own by name from the same box. Each move has its own
+card: a picture, three short steps to do it right, and a couple of cues that matter,
+plus its tier and the muscles it works.
+
+Wire the logger's &quot;add a lift&quot; button to open this library, and wire each lift's &quot;swap&quot;
+to open the same library in swap mode: when I pick the new move it takes the old one's
+place and keeps my weight, no duplicate, and starts its own clean history. Give me a kg
+and lb toggle in the corner: store one unit, convert at the edge, and let plus and minus
+step by a clean plate while the middle stays a number I can type.
+
+Everything a move adds writes through the same store as the rest of the logger, so a
+pick saves the instant I make it, and a move I removed comes back with its full history.
+Save everything in the browser so it is still there when I come back. Seed it with real
+moves so it feels alive on first open. Make it feel like an app I would pay for.
+</p>
+      </div>
+      <div class="file-actions">
+        <button class="btn primary" type="button" data-copy>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span data-copy-text>Copy</span>
+        </button>
+        <button class="btn ghost" type="button" data-download data-filename="build-the-library.txt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </button>
+      </div>
+    </div>
+
+    <div class="file">
+      <div class="file-bar" data-toggle>
+        <span class="fname"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M13 2v7h7"/></svg><span class="n">02</span> back-up-to-supabase.txt</span>
+        <span class="bar-right"><span class="ftag">SETUP</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+      </div>
+      <div class="file-body">
+        <p class="prompt" data-prompt>FREE SUPABASE SETUP (basic saving for your logger)
+
+This is the bare-bones version. It just lets your own logger SAVE what you log,
+synced to a free Supabase project. It is intentionally minimal. The clean
+architecture, row-level security, and the production-ready backend are the paid
+version. This is enough to get your saves working.
+
+====================================================================
+
+1. Make a free Supabase project
+   - Go to supabase.com and sign up (free).
+   - Click New project. Give it any name. Pick a password. Wait for it to spin up.
+
+2. Create a minimal table
+   - In your project, open the SQL editor (left sidebar).
+   - Paste the block below and run it. It makes one basic workout_log table.
+
+-- Minimal workout_log table: just enough to save a lift and its sets.
+create table if not exists workout_log (
+  id         bigint generated by default as identity primary key,
+  lift       text not null,
+  sets       jsonb not null default '[]',   -- [{ weight, reps, done }]
+  created_at timestamptz not null default now()
+);
+
+3. Grab your project keys
+   - Open Settings, then API.
+   - Copy the Project URL and the anon public key. Your logger uses these two
+     to talk to Supabase.
+
+4. Save and read
+   - To save a lift, insert a row:
+       insert into workout_log (lift, sets) values ('Bench press', '[]');
+   - To read your lifts back:
+       select * from workout_log order by created_at;
+
+That is it. Your logger can now save. When you want proper multi-user security
+and the clean architecture, that is the paid episode.
+</p>
+      </div>
+      <div class="file-actions">
+        <button class="btn primary" type="button" data-copy>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span data-copy-text>Copy</span>
+        </button>
+        <button class="btn ghost" type="button" data-download data-filename="back-up-to-supabase.txt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </button>
+      </div>
+    </div>
+
+    <a class="btn primary wide" href="./ep3-free.zip" download>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download the whole kit
+    </a>
+
+    <p class="foot">Want it wired up in one command, cloud-synced, the exact code from the video? That is on the <a href="PATREON_URL" target="_blank" rel="noopener">Patreon</a>.</p>
+  </main>
+
+<script>
+  (function(){
+    function textOf(el){ return el.querySelector('[data-prompt]').innerText.trim(); }
+    function download(name, text){
+      var blob = new Blob([text], {type:'text/plain'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a); URL.revokeObjectURL(a.href);
+    }
+    document.querySelectorAll('[data-copy]').forEach(function(btn){
+      var file = btn.closest('.file');
+      var txt = btn.querySelector('[data-copy-text]');
+      var original = txt.textContent;
+      var resetT;
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var promptText = textOf(file);
+        function ok(){ txt.textContent = 'Copied'; clearTimeout(resetT); resetT = setTimeout(function(){ txt.textContent = original; }, 1600); }
+        if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(promptText).then(ok).catch(function(){ ok(); }); } else { ok(); }
+      });
+    });
+    document.querySelectorAll('[data-download]').forEach(function(btn){
+      btn.addEventListener('click', function(e){ e.stopPropagation(); download(btn.getAttribute('data-filename'), textOf(btn.closest('.file'))); });
+    });
+    document.querySelectorAll('[data-toggle]').forEach(function(bar){
+      bar.addEventListener('click', function(){ bar.closest('.file').classList.toggle('open'); });
+    });
+  })();
+</script>
+</body>
+</html>
