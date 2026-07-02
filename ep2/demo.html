@@ -29,7 +29,7 @@
   ::selection{background:rgba(110,231,183,.25);color:#fff}
   html,body{background:var(--bg);min-height:100%}
   body{font-family:var(--sans);color:var(--fg);-webkit-font-smoothing:antialiased;letter-spacing:-.006em;
-    padding:34px 18px 90px;display:flex;justify-content:center;overflow-x:hidden}
+    padding:34px 18px 90px;display:block;overflow-x:hidden}
 
   /* background: light at the top, gradient down to pure black, snowy particles */
   .atmos{position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -38,7 +38,7 @@
       linear-gradient(180deg, #07140e 0%, #050b08 32%, #020403 64%, #000 100%);}
   #snow{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.9}
 
-  .wrap{position:relative;z-index:1;width:100%;max-width:620px}
+  .wrap{position:relative;z-index:1;width:100%;max-width:620px;margin:0 auto}
   .num,.pillValue,.pillInput{font-variant-numeric:tabular-nums}
 
   /* progress rail */
