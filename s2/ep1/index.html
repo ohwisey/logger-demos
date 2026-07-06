@@ -58,6 +58,15 @@ body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-s
 .pcard .ttl{flex:1;min-width:0}
 .pcard .ttl b{display:block;font-family:var(--serif);font-weight:400;font-size:1.18rem;line-height:1.1}
 .pcard .ttl i{font-style:normal;font-family:var(--mono);font-size:.5rem;text-transform:uppercase;letter-spacing:.13em;color:var(--muted)}
+/* the link-up 1-2-3: dead simple, a tired viewer gets it in 5 seconds */
+.lk-steps{display:grid;gap:10px;max-width:430px;margin:18px auto 0;text-align:left}
+.lk-steps .ls{display:flex;gap:12px;align-items:flex-start}
+.lk-steps .ls .n{flex:0 0 24px;height:24px;border-radius:50%;background:rgba(110,231,183,.06);border:1px solid rgba(110,231,183,.5);color:#6EE7B7;font-family:var(--mono);font-size:.66rem;display:flex;align-items:center;justify-content:center}
+.lk-steps .ls .t{font-size:.92rem;line-height:1.5;color:rgba(255,255,255,.72);padding-top:2px}
+.lk-steps .ls .t b{color:#fff;font-weight:600}
+/* amber caution flag: the capstone is for the standalone, never the dashboard path */
+.cap-flag{display:inline-flex;align-items:center;gap:8px;margin-top:12px;font-family:var(--mono);font-size:.56rem;text-transform:uppercase;letter-spacing:.16em;color:#F59E0B;border:1px solid rgba(245,158,11,.35);border-radius:999px;padding:7px 14px}
+.cap-flag .fdot{width:5px;height:5px;border-radius:50%;background:#F59E0B;box-shadow:0 0 8px rgba(245,158,11,.6);flex:none}
 .chev{flex:none;color:var(--muted);transition:transform .35s var(--ease-premium)}
 .pcard.open .chev{transform:rotate(180deg)}
 .pcard .body{max-height:0;overflow:hidden;transition:max-height .55s var(--ease-premium)}
@@ -94,6 +103,15 @@ body{background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-s
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important}}
 @keyframes fade{to{opacity:1}}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* master prompt: one paste builds the whole part (what we use in the video) */
+.master{border:1px solid rgba(110,231,183,.3);border-radius:var(--radius-card);background:rgba(110,231,183,.045);padding:16px;margin-bottom:12px;opacity:0;transform:translateY(12px);animation:cardIn .6s var(--ease-premium) .05s forwards}
+.master .mk{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.56rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mint);margin-bottom:10px}
+.master .mk .dot{width:5px;height:5px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint)}
+.master pre{background:#070808;border:1px solid var(--border);border-radius:12px;padding:14px;overflow:hidden;font-family:var(--mono);font-size:.7rem;line-height:1.65;color:#c9d2cc;white-space:pre-wrap;max-height:120px;transition:max-height .5s var(--ease-premium);-webkit-mask-image:linear-gradient(180deg,#000 50%,transparent);mask-image:linear-gradient(180deg,#000 50%,transparent)}
+.master.open pre{max-height:1200px;overflow-y:auto;-webkit-mask-image:none;mask-image:none}
+.m-expand{display:block;width:100%;border:0;background:transparent;color:var(--mint);font-family:var(--mono);font-size:.54rem;text-transform:uppercase;letter-spacing:.14em;cursor:pointer;padding:8px 0 2px;opacity:.85}
+.master .copy-btn{width:100%;margin:8px 0 0}
 </style>
 
 <div class="rail" id="rail"></div>
@@ -135,10 +153,18 @@ THE THEME. Follow this exactly, for everything we add from now on:
 - Background pure black (#000). No grays, no gradients on the page itself.
 - One accent: mint (#6EE7B7). Mint is only for wins, live numbers, and the
   primary action. Never decorate with it.
-- Font: Inter for everything. Numbers bold and big, labels small and quiet.
+- Two fonts. Headings, exercise names, and little action words in an elegant
+  serif: "Instrument Serif" from Google Fonts, italic where it feels editorial.
+  Everything else Inter: numbers bold and big, labels small and quiet.
+- Set numbers as small serif roman numerals (i, ii, iii), muted.
+- Buttons are pills (fully rounded). Small actions read as lowercase serif
+  italic words: log, swap, chart, history.
 - Big rounded cards (18px), hairline borders (white at 8%), lots of breathing room.
 - Mobile first. Big tap targets, everything reachable with a thumb.
-- The overall feel: a premium Apple Health app. Calm, spacious, one thing at a time.
+- First-use screens are never blank: one warm inviting line and one clear mint
+  action, always.
+- The overall feel: a premium Apple Health app crossed with an editorial
+  magazine. Calm, spacious, one thing at a time.
 
 For now just build the shell: a clean title bar and an empty "today" area below it.
 Nothing else yet. We add one piece at a time.</pre>
@@ -151,6 +177,42 @@ Nothing else yet. We add one piece at a time.</pre>
   <div class="sect">
     <span class="k">Part 1 · progressive overload</span>
     <h2>The proof you are winning</h2>
+  </div>
+
+  <div class="master">
+    <div class="mk"><span class="dot"></span>In a hurry? One paste builds all of Part 1 · this is what we use in the video</div>
+    <pre>Build a workout app as ONE single index.html file. No build step, works offline,
+saves everything in the browser so it is still there when I reload.
+
+THE THEME. Follow this exactly, for everything we add from now on:
+- Background pure black (#000). No grays, no gradients on the page itself.
+- One accent: mint (#6EE7B7). Mint is only for wins, live numbers, and the
+  primary action. Never decorate with it.
+- Two fonts. Headings, exercise names, and little action words in an elegant
+  serif: "Instrument Serif" from Google Fonts, italic where it feels editorial.
+  Everything else Inter: numbers bold and big, labels small and quiet.
+- Set numbers as small serif roman numerals (i, ii, iii), muted.
+- Buttons are pills (fully rounded). Small actions read as lowercase serif
+  italic words: log, swap, chart, history.
+- Big rounded cards (18px), hairline borders (white at 8%), lots of breathing room.
+- Mobile first. Big tap targets, everything reachable with a thumb.
+- First-use screens are never blank: one warm inviting line and one clear mint
+  action, always.
+- The overall feel: a premium Apple Health app crossed with an editorial
+  magazine. Calm, spacious, one thing at a time.
+
+Then build Part 1, all of it:
+1. Let me pick an exercise and log sets with weight and reps. Keep the full
+   history of every set per exercise.
+2. Next to each exercise show my best previous set. The moment a new set beats
+   it, light that set up in mint. Winning should be visible instantly.
+3. A clean mint line chart of my top set over time for each exercise. Let me
+   scrub across it with my finger to see any past session. Under it: best ever,
+   and my current beat-last-time streak.
+
+Build it clean and complete.</pre>
+    <button class="m-expand">Show the whole prompt</button>
+    <button class="copy-btn"><span class="ring"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>Copy all of Part 1</button>
   </div>
 
   <article class="pcard" style="--i:1">
@@ -190,6 +252,22 @@ Under it: best ever, and my current beat-last-time streak.</pre>
     <h2>Grades every set, live</h2>
   </div>
 
+  <div class="master">
+    <div class="mk"><span class="dot"></span>One paste builds all of Part 2 · same chat, straight after Part 1</div>
+    <pre>Same file, same theme. Now build Part 2, all of it:
+1. A "today" screen: I add exercises to a session and log several sets under
+   each, weight and reps. Each exercise is its own card.
+2. The instant I log a set, grade it against my last time on that exercise:
+   a small badge on the set row. Beat it = mint. A personal record = amber "PR".
+   Below it = quiet gray, never red, never shame. Alive but calm.
+3. A Finish button that saves the session and shows a short celebration screen:
+   what I lifted today and anything I beat. Understated, earned, not confetti spam.
+
+Build it clean and complete.</pre>
+    <button class="m-expand">Show the whole prompt</button>
+    <button class="copy-btn"><span class="ring"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>Copy all of Part 2</button>
+  </div>
+
   <article class="pcard" style="--i:4">
     <div class="hd"><span class="pnum">2.1</span><span class="ttl"><b>Today's session</b><i>the full workout screen</i></span>
       <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
@@ -227,6 +305,22 @@ what I lifted today and anything I beat. Understated, earned, not confetti spam.
     <h2>Teaches as you build</h2>
   </div>
 
+  <div class="master">
+    <div class="mk"><span class="dot"></span>One paste builds all of Part 3 · same chat, straight after Part 2</div>
+    <pre>Same file, same theme. Now build Part 3, all of it:
+1. A searchable exercise library I can open while building my session, organized
+   by muscle group with a search box on top. Include the classics (bench, squat,
+   deadlift, rows, presses, curls) so it is useful from minute one.
+2. When I tap an exercise in the library, show a simple how-to (3 short steps)
+   and a small diagram of the muscle it hits, so I learn the move as I pick it.
+3. Let me add an exercise from the library straight into today's session, and
+   swap one exercise for another without losing my logged sets or my history.
+
+Build it clean and complete.</pre>
+    <button class="m-expand">Show the whole prompt</button>
+    <button class="copy-btn"><span class="ring"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>Copy all of Part 3</button>
+  </div>
+
   <article class="pcard" style="--i:7">
     <div class="hd"><span class="pnum">3.1</span><span class="ttl"><b>The library</b><i>searchable · by muscle group</i></span>
       <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
@@ -258,24 +352,98 @@ one exercise for another without losing my logged sets or my history.</pre>
     </div>
   </article>
 
+  <!-- DASHBOARD LINK-UP -->
+  <div class="sect">
+    <span class="k">The link-up · plug it into your dashboard</span>
+    <h2>Light up the Train tile</h2>
+    <p>Your logger is built. This puts it on your Episode 0 dashboard. No dashboard? Skip ahead, the logger works on its own.</p>
+    <div class="lk-steps">
+      <div class="ls"><span class="n">1</span><span class="t"><b>Copy</b> the paste below</span></div>
+      <div class="ls"><span class="n">2</span><span class="t"><b>Paste it</b> into the same Claude chat that built your logger</span></div>
+      <div class="ls"><span class="n">3</span><span class="t">Done. Your <b>Train tile is your logger</b>, full screen</span></div>
+    </div>
+  </div>
+
+  <div class="master">
+    <div class="mk"><span class="dot"></span>One paste · same chat, straight after Part 3</div>
+    <pre>My logger is done. Now plug it into my Vitality dashboard from Episode 0.
+
+First find my dashboard: it is my own copy of vitality-base. If the folder is
+not on this computer, ask me for the GitHub link to my copy and clone it here
+first, then continue.
+
+Make a dashboard copy of my logger as ONE self-contained HTML file:
+1. Everything inline, no outside requests. It runs sealed inside a dashboard
+   tile, so anything not in the file will not load.
+2. No localStorage in this copy. The dashboard provides a bridge: save with
+   await window.Vitality.save(data) and read it back with
+   await window.Vitality.load(). You never write the bridge yourself.
+3. If window.Vitality is missing (the file opened on its own), fall back to
+   saving on the device, so the same file works both places.
+4. Same theme, same features. Do not dumb anything down.
+
+Save it as public/tiles/train.html inside the dashboard folder, commit, and
+push. Then tell me to wait a minute for the deploy and refresh my dashboard:
+the Train tile is now my logger.</pre>
+    <button class="m-expand">Show the whole prompt</button>
+    <button class="copy-btn"><span class="ring"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>Copy the link-up</button>
+  </div>
+
+  <article class="pcard" style="--i:10">
+    <div class="hd"><span class="pnum">L1</span><span class="ttl"><b>If the tile acts up</b><i>the repair paste · 30 seconds</i></span>
+      <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+    <div class="body"><pre>My Train tile is not right after the link-up (blank, not saving, or looks off).
+Open public/tiles/train.html in my dashboard folder and repair it. Check, in
+order:
+1. No localStorage anywhere in this file. Every save and load goes through
+   await window.Vitality.save(data) and await window.Vitality.load().
+2. The file is fully self-contained: no outside links, fonts, or requests.
+3. The fallback exists: if window.Vitality is missing, it saves on the device.
+4. The file sits at exactly public/tiles/train.html, nowhere else.
+Fix what you find, commit, push, and tell me in one line what was wrong.</pre>
+      <button class="copy-btn"><span class="ring"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>Copy the repair paste</button>
+      <div class="body-pad"></div>
+    </div>
+  </article>
+
+  <article class="pcard" style="--i:11">
+    <div class="hd"><span class="pnum">L2</span><span class="ttl"><b>Had your dashboard a while?</b><i>the update paste · pulls the newest dashboard features</i></span>
+      <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
+    <div class="body"><pre>My Vitality dashboard is an older copy of vitality-base. Bring it up to date:
+add https://github.com/RowanThistlebrooke/vitality-base as a remote called
+upstream, merge its latest main into my copy, and if anything conflicts keep
+my own tiles in public/tiles/ and my name in content/site.ts. Then push.
+Tell me in one line what is new.</pre>
+      <button class="copy-btn"><span class="ring"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>Copy the update paste</button>
+      <div class="body-pad"></div>
+    </div>
+  </article>
+
   <!-- CLOUD -->
   <div class="sect">
     <span class="k">The capstone · optional</span>
     <h2>Back it up to the cloud</h2>
-    <p>Your logger already works and saves on your device. This last prompt makes it follow you across devices. It is the only step that needs an account (Supabase, free).</p>
+    <div class="cap-flag"><span class="fdot"></span>On the dashboard? You are done · skip this</div>
+    <p>Using the logger on its own, without the dashboard? One paste makes your data follow you across devices.</p>
   </div>
 
-  <article class="pcard" style="--i:10">
-    <div class="hd"><span class="pnum">C</span><span class="ttl"><b>Cloud backup</b><i>Supabase · your data only</i></span>
-      <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></div>
-    <div class="body"><pre>Now add Supabase cloud backup so everything follows me across devices.
-Give me the SQL for one table, add a simple sign in, and scope every row to my
-own account so no one else can ever see my data. Walk me through the Supabase
-setup step by step like I have never used it. Keep it dead simple.</pre>
-      <button class="copy-btn"><span class="ring"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>Copy the capstone</button>
-      <div class="body-pad"></div>
-    </div>
-  </article>
+  <div class="master">
+    <div class="mk"><span class="dot"></span>One paste · works with or without Supabase</div>
+    <pre>Give my logger cloud backup so my data follows me across devices.
+
+If I already have a Supabase project (I built the Episode 0 dashboard), use
+that one: give me the SQL for one table to paste into its SQL editor, add a
+simple sign in, and lock every row to my own account so nobody else can ever
+read my data.
+
+If I do not have Supabase, walk me through creating a free project first,
+step by step, like I have never used it.
+
+Either way: keep saving on my device as the offline fallback. Same theme.
+Keep it dead simple.</pre>
+    <button class="m-expand">Show the whole prompt</button>
+    <button class="copy-btn"><span class="ring"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>Copy the capstone</button>
+  </div>
 
   <footer class="kit-foot">
     <div class="foot-rule"></div>
@@ -299,6 +467,13 @@ setup step by step like I have never used it. Keep it dead simple.</pre>
       b.classList.remove('spark'); void b.offsetWidth; b.classList.add('spark','copied');
       var t = b.childNodes[b.childNodes.length-1], p = t.textContent; t.textContent = ' Copied';
       setTimeout(function(){ b.classList.remove('copied'); t.textContent = p; }, 1400);
+    });
+  });
+  // master prompt expand
+  document.querySelectorAll('.m-expand').forEach(function(x){
+    x.addEventListener('click', function(){
+      var m = x.closest('.master'); m.classList.toggle('open');
+      x.textContent = m.classList.contains('open') ? 'Hide' : 'Show the whole prompt';
     });
   });
   // progress rail
