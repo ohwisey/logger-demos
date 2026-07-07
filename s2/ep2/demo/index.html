@@ -32,6 +32,22 @@
   .row .rm { background: none; border: none; color: #555; font-size: 16px; cursor: pointer; padding: 2px 6px; }
   .when { width: 100%; background: #0d0d0d; border: 1px solid #333; color: #eee; border-radius: 10px; padding: 13px; font-size: 14px; cursor: pointer; margin-top: 6px; }
   .tip { color: #aaa; font-size: 14px; line-height: 1.5; padding: 12px 4px 0; display: none; }
+  .tload { height: 3px; background: #222; border-radius: 99px; overflow: hidden; margin: 12px 4px 0; display: none; }
+  .tload i { display: block; height: 100%; width: 40%; background: #eee; border-radius: 99px; animation: tsweep 0.9s ease-in-out infinite; }
+  @keyframes tsweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
+  .reading { color: #888; font-size: 13px; font-style: italic; padding: 10px 4px 0; display: none; }
+  .results div.picker { display: block; cursor: default; padding: 14px; }
+  .results div.picker:hover { background: none; }
+  .results .picker .pnm { display: block; }
+  .results div.times { display: flex; justify-content: flex-start; padding: 0; cursor: default; }
+  .results div.times:hover { background: none; }
+  .picker { padding: 12px 14px; border-top: 1px solid #333; }
+  .picker .pnm { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .picker input { width: 100%; background: #0d0d0d; border: 1px solid #333; border-radius: 8px; color: #eee; padding: 9px 11px; font-size: 14px; outline: none; margin-bottom: 10px; }
+  .times { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .times button { background: #0d0d0d; border: 1px solid #333; color: #aaa; border-radius: 99px; padding: 7px 12px; font-size: 12px; cursor: pointer; }
+  .times button.sel { background: #eee; color: #000; border-color: #eee; font-weight: 600; }
+  .pkadd { width: 100%; background: #eee; color: #000; border: none; border-radius: 8px; padding: 10px; font-size: 14px; font-weight: 700; cursor: pointer; }
   .foot { margin-top: 28px; color: #555; font-size: 12px; line-height: 1.7; text-align: center; }
   .foot a { color: #999; }
 </style>
@@ -53,6 +69,8 @@
 <div id="groups"></div>
 
 <button class="when" id="when">When to take them</button>
+<div class="reading" id="reading">Reading your stack for the best timing...</div>
+<div class="tload" id="tload"><i></i></div>
 <div class="tip" id="tip"></div>
 
 <div class="foot">
@@ -200,6 +218,27 @@ function render(){
   document.getElementById('fill').style.width=(total?Math.round(done/total*100):0)+'%';
 }
 const q=document.getElementById('q'),res=document.getElementById('res');
+/* one add flow for everything: pick the time of day (prefilled with the smart default), tweak the dose, add */
+function showPicker(name,dose,time,note){
+  res.innerHTML='';
+  let sel=time;
+  const p=document.createElement('div');p.className='picker';
+  p.innerHTML='<div class="pnm">'+name+'</div>';
+  const doseIn=document.createElement('input');doseIn.placeholder='Dose (e.g. 5 g)';doseIn.value=dose||'';p.appendChild(doseIn);
+  const times=document.createElement('div');times.className='times';
+  GROUPS.forEach(([id,label])=>{
+    const b=document.createElement('button');b.type='button';b.textContent=label;
+    if(id===sel)b.classList.add('sel');
+    b.onclick=()=>{sel=id;times.querySelectorAll('button').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');};
+    times.appendChild(b);
+  });
+  p.appendChild(times);
+  const add=document.createElement('button');add.className='pkadd';add.type='button';add.textContent='Add to my stack';
+  add.onclick=()=>{st.items.push({id:Date.now()+Math.random(),name:name,dose:doseIn.value.trim(),time:sel,note:note||''});save();q.value='';res.style.display='none';render();};
+  p.appendChild(add);
+  res.appendChild(p);
+  res.style.display='block';
+}
 q.oninput=()=>{
   const v=q.value.trim().toLowerCase();res.innerHTML='';
   if(!v){res.style.display='none';return;}
@@ -207,23 +246,30 @@ q.oninput=()=>{
   hits.forEach(x=>{
     const d=document.createElement('div');
     d.innerHTML='<span>'+x[0]+'</span><span class="d">'+x[1]+' · '+x[2]+'</span>';
-    d.onclick=()=>{st.items.push({id:Date.now()+Math.random(),name:x[0],dose:x[1],time:x[2],note:x[3]});save();q.value='';res.style.display='none';render();};
+    d.onclick=()=>showPicker(x[0],x[1],x[2],x[3]);
     res.appendChild(d);
   });
   const own=document.createElement('div');
   own.innerHTML='<span>Add "'+q.value.trim()+'" as my own</span><span class="d">custom</span>';
-  own.onclick=()=>{st.items.push({id:Date.now()+Math.random(),name:q.value.trim(),dose:'',time:'anytime',note:''});save();q.value='';res.style.display='none';render();};
+  own.onclick=()=>showPicker(q.value.trim(),'','anytime','');
   res.appendChild(own);
   res.style.display='block';
 };
-document.addEventListener('click',e=>{if(!e.target.closest('.search'))res.style.display='none';});
-let tipIdx=0;
+document.addEventListener('click',e=>{if(document.contains(e.target)&&!e.target.closest('.search'))res.style.display='none';});
+/* the timing reader: it reads for a moment, then the advice lands */
+let tipIdx=0,reading=false;
 document.getElementById('when').onclick=()=>{
+  if(reading)return;
   const noted=st.items.filter(x=>x.note);
-  const t=document.getElementById('tip');
+  const t=document.getElementById('tip'),r=document.getElementById('reading'),l=document.getElementById('tload');
+  t.style.display='none';
   if(!noted.length){t.textContent='Add something from the library first, then I can tell you when to take it.';t.style.display='block';return;}
-  const x=noted[tipIdx%noted.length];tipIdx++;
-  t.textContent=x.name+': '+x.note;t.style.display='block';
+  reading=true;r.style.display='block';l.style.display='block';
+  setTimeout(()=>{
+    r.style.display='none';l.style.display='none';reading=false;
+    const x=noted[tipIdx%noted.length];tipIdx++;
+    t.textContent=x.name+': '+x.note;t.style.display='block';
+  },1100);
 };
 render();
 </script>
