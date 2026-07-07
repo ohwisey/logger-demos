@@ -346,8 +346,15 @@ Make a dashboard copy of my stack as ONE self-contained HTML file:
 4. Same theme, same features. Do not dumb anything down.
 
 Save it as public/tiles/fuel.html inside the dashboard folder, commit, and
-push. Then tell me to wait a minute for the deploy and refresh my dashboard:
-the Fuel tile is now my supplement stack.</pre>
+push.
+
+Then PROVE it landed instead of hoping: ask me for my dashboard's live
+address (the vercel.app one), and check <my address>/tiles/fuel.html every 20
+seconds for up to 4 minutes until it stops being a 404. The moment it is
+live, tell me to refresh my dashboard: the Fuel tile is now my stack. If it
+is still missing after 4 minutes, the deploy never ran: walk me through
+vercel.com -> my project -> Deployments to see whether the newest push built
+or failed, and fix what we find together.</pre>
     <button class="m-expand">Show the whole prompt</button>
     <button class="copy-btn"><span class="ring"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>Copy the link-up</button>
   </div>
