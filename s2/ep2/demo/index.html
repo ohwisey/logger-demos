@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My stack — the base build</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #000; color: #eee; font-family: -apple-system, system-ui, sans-serif; max-width: 640px; margin: 0 auto; padding: 24px 16px 80px; }
+  h1 { font-size: 22px; font-weight: 700; }
+  .sub { color: #888; font-size: 13px; margin: 4px 0 18px; }
+  .top { border: 1px solid #333; border-radius: 10px; padding: 14px; margin-bottom: 16px; }
+  .count { font-size: 18px; font-weight: 600; }
+  .bar { height: 6px; background: #222; border-radius: 99px; margin-top: 10px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: #eee; border-radius: 99px; transition: width 0.2s; }
+  .search { position: relative; margin-bottom: 20px; }
+  .search input { width: 100%; background: #0d0d0d; border: 1px solid #333; border-radius: 10px; color: #eee; padding: 12px 14px; font-size: 15px; outline: none; }
+  .results { position: absolute; left: 0; right: 0; top: 100%; margin-top: 6px; background: #111; border: 1px solid #333; border-radius: 10px; overflow: hidden; z-index: 5; display: none; max-height: 260px; overflow-y: auto; }
+  .results div { padding: 11px 14px; font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; gap: 10px; }
+  .results div:hover { background: #1c1c1c; }
+  .results .d { color: #777; font-size: 12px; white-space: nowrap; }
+  .grp { margin-bottom: 18px; }
+  .grp h2 { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: #777; margin-bottom: 8px; }
+  .empty { color: #444; font-size: 13px; font-style: italic; }
+  .row { border: 1px solid #2c2c2c; border-radius: 10px; padding: 11px 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 11px; cursor: pointer; }
+  .row .ck { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #555; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #000; }
+  .row.done .ck { background: #eee; border-color: #eee; }
+  .row .nm { font-size: 15px; font-weight: 500; }
+  .row.done .nm { text-decoration: line-through; color: #777; }
+  .row .note { display: block; font-size: 12px; color: #777; margin-top: 2px; }
+  .row .ds { margin-left: auto; color: #888; font-size: 12px; white-space: nowrap; }
+  .row .rm { background: none; border: none; color: #555; font-size: 16px; cursor: pointer; padding: 2px 6px; }
+  .when { width: 100%; background: #0d0d0d; border: 1px solid #333; color: #eee; border-radius: 10px; padding: 13px; font-size: 14px; cursor: pointer; margin-top: 6px; }
+  .tip { color: #aaa; font-size: 14px; line-height: 1.5; padding: 12px 4px 0; display: none; }
+  .foot { margin-top: 28px; color: #555; font-size: 12px; line-height: 1.7; text-align: center; }
+  .foot a { color: #999; }
+</style>
+</head>
+<body>
+<h1>My stack</h1>
+<div class="sub" id="today"></div>
+
+<div class="top">
+  <div class="count" id="count">0 of 0 taken</div>
+  <div class="bar"><i id="fill"></i></div>
+</div>
+
+<div class="search">
+  <input id="q" type="text" placeholder="Search 100+ supplements to add" autocomplete="off">
+  <div class="results" id="res"></div>
+</div>
+
+<div id="groups"></div>
+
+<button class="when" id="when">When to take them</button>
+<div class="tip" id="tip"></div>
+
+<div class="foot">
+  This is the base build from Episode 2, exactly what you build yourself with the free prompts.<br>
+  Your data stays in this browser. Built along on YouTube · Road to Vitality.
+</div>
+
+<script>
+const LIB = [
+["Creatine monohydrate","5 g","anytime","Any time works. Consistency beats timing."],
+["Whey protein","25-40 g","anytime","Any time. Around training is convenient, total daily protein matters most."],
+["Caffeine","100-200 mg","morning","30 to 45 minutes before training is the sweet spot. Avoid within 8 hours of bed."],
+["L-theanine","100-200 mg","morning","Pairs with caffeine to smooth the edge."],
+["Vitamin D3","2,000-5,000 IU","morning","Morning with a meal that has some fat."],
+["Vitamin K2 (MK-7)","90-200 mcg","morning","Take alongside vitamin D3 with food."],
+["Magnesium glycinate","200-400 mg","evening","Evening. Be consistent."],
+["Magnesium citrate","200-400 mg","evening","Evening. Can loosen stool at higher doses."],
+["Fish oil (EPA/DHA)","1-3 g","midday","With a meal containing fat."],
+["Zinc","15-30 mg","evening","Away from calcium and coffee. Food helps avoid nausea."],
+["Ashwagandha (KSM-66)","300-600 mg","evening","Evening for most. Give it a few weeks."],
+["Melatonin","0.5-3 mg","before bed","30 to 60 minutes before bed. Less is often more."],
+["Glycine","3 g","before bed","Before bed. Can improve sleep quality."],
+["Apigenin","50 mg","before bed","Before bed, often stacked with magnesium."],
+["L-citrulline","6-8 g","morning","45 to 60 minutes before training."],
+["Beta-alanine","3-6 g","anytime","Daily, any time. The tingle is normal."],
+["Betaine anhydrous","2.5 g","anytime","Daily with food."],
+["Taurine","1-2 g","anytime","Any time. Often in pre-workouts."],
+["Electrolytes","1 serving","morning","Morning or around training, especially if you sweat."],
+["Vitamin C","500-1,000 mg","morning","With food. Split doses absorb better."],
+["B-complex","1 serving","morning","Morning with food. Can color urine bright yellow, harmless."],
+["Vitamin B12","500-1,000 mcg","morning","Morning. Especially if you eat little meat."],
+["Folate (methylfolate)","400 mcg","morning","With food."],
+["Iron (bisglycinate)","18-25 mg","morning","Empty stomach if tolerated, away from coffee and calcium. Test levels first."],
+["Calcium citrate","500 mg","evening","Away from iron and zinc."],
+["Potassium citrate","99 mg","midday","With food and water."],
+["Boron","3-6 mg","morning","With food."],
+["Selenium","100-200 mcg","morning","With food. Do not exceed 400 mcg daily."],
+["Iodine (kelp)","150 mcg","morning","With food."],
+["Copper","1-2 mg","morning","Balance if supplementing zinc long term."],
+["Chromium","200 mcg","midday","With carb-containing meals."],
+["Omega-3 algae oil","1-2 g","midday","Plant-based EPA/DHA, with a fatty meal."],
+["Cod liver oil","1 tsp","morning","With food. Also carries vitamins A and D."],
+["Krill oil","1-2 g","midday","With food."],
+["Collagen peptides","10-15 g","anytime","Any time. With vitamin C before training for joints."],
+["Gelatin","10 g","anytime","With vitamin C, 30 to 60 minutes before training."],
+["Glucosamine","1,500 mg","morning","With food, daily for joints."],
+["Chondroitin","1,200 mg","morning","With glucosamine."],
+["MSM","1-3 g","morning","With food."],
+["Curcumin (with piperine)","500-1,000 mg","midday","With a fatty meal for absorption."],
+["Boswellia","300-500 mg","midday","With food."],
+["Ginger extract","500-1,000 mg","midday","With food. Good for digestion."],
+["Berberine","500 mg","midday","With carb meals, up to 2 to 3 times daily."],
+["Alpha-lipoic acid","300-600 mg","morning","Empty stomach for absorption."],
+["Inositol","2-4 g","before bed","Evening. Calming for many."],
+["NAC","600-1,200 mg","morning","Empty stomach or with light food."],
+["Glutathione (liposomal)","250-500 mg","morning","Empty stomach."],
+["CoQ10 (ubiquinol)","100-200 mg","midday","With a fatty meal. Especially if on statins."],
+["PQQ","10-20 mg","morning","With food."],
+["Resveratrol","150-500 mg","morning","With a fatty meal."],
+["Quercetin","500 mg","morning","With food."],
+["Grape seed extract","150-300 mg","morning","With food."],
+["Green tea extract (EGCG)","250-500 mg","midday","With food, never fasted, easier on the liver."],
+["Astaxanthin","4-12 mg","midday","With a fatty meal."],
+["Lutein + zeaxanthin","10 mg","midday","With fat, for eyes and screens."],
+["Bilberry extract","160 mg","midday","With food."],
+["Lion's mane","500-1,000 mg","morning","Morning. Give it weeks, not days."],
+["Cordyceps","1-3 g","morning","Morning or pre-training."],
+["Reishi","1-2 g","before bed","Evening. Calming, supports sleep."],
+["Chaga","1-2 g","morning","Morning, often as tea."],
+["Rhodiola rosea","200-400 mg","morning","Morning, empty stomach. Cycle it."],
+["Panax ginseng","200-400 mg","morning","Morning. Cycle 2 to 3 weeks on, 1 off."],
+["Maca root","1.5-3 g","morning","Morning with food."],
+["Tongkat ali","200-400 mg","morning","Morning. Cycle it."],
+["Fadogia agrestis","300-600 mg","morning","Morning. Cycle it. Research is young."],
+["Shilajit","300-500 mg","morning","Morning with warm water."],
+["Tribulus","500-750 mg","morning","Morning with food."],
+["DHEA","25-50 mg","morning","Morning. Test levels first, talk to a doctor."],
+["Pregnenolone","10-30 mg","morning","Morning. Start low."],
+["Alpha-GPC","300-600 mg","morning","Pre-training or morning focus work."],
+["CDP-choline (citicoline)","250-500 mg","morning","Morning. Good with racetams."],
+["Huperzine A","50-200 mcg","morning","Cycle it, do not take daily forever."],
+["Bacopa monnieri","300 mg","evening","With food. Takes 8 to 12 weeks."],
+["Ginkgo biloba","120-240 mg","morning","With food."],
+["Phosphatidylserine","100-300 mg","evening","With food. May blunt cortisol."],
+["Acetyl-L-carnitine","500-1,500 mg","morning","Empty stomach, morning."],
+["L-tyrosine","500-2,000 mg","morning","Empty stomach, 30 to 60 minutes before stress or training."],
+["5-HTP","50-100 mg","before bed","Evening. Do not combine with SSRIs."],
+["GABA","250-750 mg","before bed","Before bed."],
+["Valerian root","300-600 mg","before bed","30 to 60 minutes before bed."],
+["Chamomile extract","220-400 mg","before bed","Evening, or as tea."],
+["Lemon balm","300-600 mg","evening","Evening. Calming."],
+["Passionflower","250-500 mg","before bed","Before bed."],
+["Tart cherry extract","480 mg","before bed","Evening. Sleep and recovery."],
+["Probiotic (multi-strain)","10-50 B CFU","morning","Empty stomach or with breakfast, be consistent."],
+["Prebiotic fiber (inulin)","5-10 g","midday","With food and water. Start low."],
+["Psyllium husk","5-10 g","evening","With plenty of water, away from meds."],
+["Digestive enzymes","1 serving","midday","With your largest meal."],
+["Betaine HCl","650 mg","midday","With protein meals only."],
+["L-glutamine","5-10 g","morning","Empty stomach for gut focus."],
+["Milk thistle","150-300 mg","evening","With food. Liver support."],
+["TUDCA","250-500 mg","evening","With food. Liver support."],
+["Dandelion root","500 mg","morning","With food or as tea."],
+["Cranberry extract","500 mg","morning","With water."],
+["Saw palmetto","320 mg","evening","With food."],
+["Pygeum","100 mg","evening","With food."],
+["Nettle root","300-600 mg","morning","With food."],
+["Beetroot powder","5 g","morning","45 to 60 minutes before training."],
+["HMB","3 g","anytime","Split with meals on training days."],
+["EAAs","10-15 g","anytime","Around training or between meals."],
+["BCAAs","5-10 g","anytime","Around training. EAAs usually beat them."],
+["Dextrose / cyclic dextrin","25-50 g","anytime","Intra or post training only."],
+["Sodium bicarbonate","0.2-0.3 g/kg","anytime","60 to 90 minutes before hard conditioning. Start low, stomach warning."],
+["Nitrate (from beet)","400-800 mg","morning","2 to 3 hours before endurance work."],
+["Hyaluronic acid","120-240 mg","morning","With food. Skin and joints."],
+["Biotin","2,500-5,000 mcg","morning","With food. Can skew blood tests."],
+["Silica (bamboo)","10-40 mg","morning","With food. Hair and nails."],
+["MCT oil","1 tbsp","morning","Morning coffee or shakes. Start small."]
+];
+const KEY='basestack.v1';
+const GROUPS=[["morning","Morning"],["midday","Midday"],["evening","Evening"],["before bed","Before bed"],["anytime","Anytime"]];
+const dkey=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+let st=JSON.parse(localStorage.getItem(KEY)||'{"items":[],"taken":{},"day":""}');
+if(st.day!==dkey()){st.taken={};st.day=dkey();}
+const save=()=>localStorage.setItem(KEY,JSON.stringify(st));
+document.getElementById('today').textContent=new Date().toDateString();
+
+function render(){
+  const g=document.getElementById('groups');g.innerHTML='';
+  GROUPS.forEach(([id,label])=>{
+    const items=st.items.filter(x=>x.time===id);
+    const sec=document.createElement('div');sec.className='grp';
+    sec.innerHTML='<h2>'+label+'</h2>';
+    if(!items.length){sec.innerHTML+='<div class="empty">Nothing yet</div>';}
+    items.forEach(x=>{
+      const done=!!st.taken[x.id];
+      const r=document.createElement('div');r.className='row'+(done?' done':'');
+      r.innerHTML='<span class="ck">'+(done?'&#10003;':'')+'</span><span><span class="nm">'+x.name+'</span>'+(x.note?'<span class="note">'+x.note+'</span>':'')+'</span><span class="ds">'+x.dose+'</span><button class="rm" title="Remove">&#215;</button>';
+      r.onclick=e=>{if(e.target.classList.contains('rm')){st.items=st.items.filter(i=>i.id!==x.id);delete st.taken[x.id];}else{st.taken[x.id]=!st.taken[x.id];if(!st.taken[x.id])delete st.taken[x.id];}save();render();};
+      sec.appendChild(r);
+    });
+    g.appendChild(sec);
+  });
+  const total=st.items.length,done=Object.keys(st.taken).length;
+  document.getElementById('count').textContent=done+' of '+total+' taken';
+  document.getElementById('fill').style.width=(total?Math.round(done/total*100):0)+'%';
+}
+const q=document.getElementById('q'),res=document.getElementById('res');
+q.oninput=()=>{
+  const v=q.value.trim().toLowerCase();res.innerHTML='';
+  if(!v){res.style.display='none';return;}
+  const hits=LIB.filter(x=>x[0].toLowerCase().includes(v)).slice(0,8);
+  hits.forEach(x=>{
+    const d=document.createElement('div');
+    d.innerHTML='<span>'+x[0]+'</span><span class="d">'+x[1]+' · '+x[2]+'</span>';
+    d.onclick=()=>{st.items.push({id:Date.now()+Math.random(),name:x[0],dose:x[1],time:x[2],note:x[3]});save();q.value='';res.style.display='none';render();};
+    res.appendChild(d);
+  });
+  const own=document.createElement('div');
+  own.innerHTML='<span>Add "'+q.value.trim()+'" as my own</span><span class="d">custom</span>';
+  own.onclick=()=>{st.items.push({id:Date.now()+Math.random(),name:q.value.trim(),dose:'',time:'anytime',note:''});save();q.value='';res.style.display='none';render();};
+  res.appendChild(own);
+  res.style.display='block';
+};
+document.addEventListener('click',e=>{if(!e.target.closest('.search'))res.style.display='none';});
+let tipIdx=0;
+document.getElementById('when').onclick=()=>{
+  const noted=st.items.filter(x=>x.note);
+  const t=document.getElementById('tip');
+  if(!noted.length){t.textContent='Add something from the library first, then I can tell you when to take it.';t.style.display='block';return;}
+  const x=noted[tipIdx%noted.length];tipIdx++;
+  t.textContent=x.name+': '+x.note;t.style.display='block';
+};
+render();
+</script>
+</body>
+</html>
