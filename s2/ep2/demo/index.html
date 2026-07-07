@@ -33,9 +33,10 @@
   .when { width: 100%; background: #0d0d0d; border: 1px solid #333; color: #eee; border-radius: 10px; padding: 13px; font-size: 14px; cursor: pointer; margin-top: 6px; }
   .tip { color: #aaa; font-size: 14px; line-height: 1.5; padding: 12px 4px 0; display: none; }
   .tload { height: 3px; background: #222; border-radius: 99px; overflow: hidden; margin: 12px 4px 0; display: none; }
-  .tload i { display: block; height: 100%; width: 40%; background: #eee; border-radius: 99px; animation: tsweep 0.9s ease-in-out infinite; }
+  .tload i { display: block; height: 100%; width: 40%; background: linear-gradient(90deg, transparent, #6EE7B7, transparent); border-radius: 99px; animation: tsweep 0.9s ease-in-out infinite; }
   @keyframes tsweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(300%); } }
-  .reading { color: #888; font-size: 13px; font-style: italic; padding: 10px 4px 0; display: none; }
+  .reading { color: #6EE7B7; font-size: 16px; font-family: Georgia, 'Times New Roman', serif; font-style: italic; padding: 12px 4px 0; display: none; }
+  .foryou { display: inline-block; background: #6EE7B7; color: #000; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; border-radius: 99px; padding: 5px 12px; }
   .results div.picker { display: block; cursor: default; padding: 14px; }
   .results div.picker:hover { background: none; }
   .results .picker .pnm { display: block; }
@@ -268,7 +269,7 @@ document.getElementById('when').onclick=()=>{
   setTimeout(()=>{
     r.style.display='none';l.style.display='none';reading=false;
     const x=noted[tipIdx%noted.length];tipIdx++;
-    t.textContent=x.name+': '+x.note;t.style.display='block';
+    t.innerHTML='<span class="foryou">FOR YOU</span><div style="margin-top:9px"><b>'+x.name+':</b> '+x.note+'</div>';t.style.display='block';
   },1100);
 };
 render();
