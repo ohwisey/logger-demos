@@ -1,0 +1,137 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My subscriptions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{ --mint:#6EE7B7; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#fff;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:560px;margin:0 auto;padding:28px 18px 80px}
+h1{font-family:'Instrument Serif',Georgia,serif;font-weight:400;font-size:2rem}
+.sub{font-size:.85rem;color:rgba(255,255,255,.5);margin-top:4px}
+.card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px;margin-top:16px}
+.lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.5)}
+.big{font-size:2.2rem;font-weight:700;font-variant-numeric:tabular-nums;margin-top:6px}
+.big small{font-size:.85rem;font-weight:400;color:rgba(255,255,255,.5)}
+.yr{font-size:.8rem;color:rgba(255,255,255,.55);margin-top:4px}
+.warn{margin-top:12px;border:1px solid rgba(245,158,11,.4);background:rgba(245,158,11,.07);border-radius:12px;padding:10px 12px;font-size:.84rem;color:#F5CFA8}
+.warn b{color:#fff}
+form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+input,select{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.16);border-radius:10px;color:#fff;padding:11px 12px;font:inherit;font-size:.9rem;outline:none;width:100%}
+input:focus,select:focus{border-color:rgba(110,231,183,.55)}
+input::placeholder{color:rgba(255,255,255,.35)}
+input[type=date]{color-scheme:dark}
+button.add{grid-column:1/-1;background:var(--mint);color:#04120b;border:0;border-radius:999px;padding:12px;font-weight:600;font-size:.95rem;cursor:pointer}
+.row{display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08);padding:12px 2px}
+.row:last-child{border-bottom:0}
+.row.urgent{background:rgba(245,158,11,.07);border-radius:10px;padding:12px 10px}
+.nm{font-family:'Instrument Serif',Georgia,serif;font-size:1.1rem;flex:1;min-width:0}
+.meta{font-size:.72rem;color:rgba(255,255,255,.5);margin-top:2px}
+.meta .due{color:var(--mint)}
+.row.urgent .meta .due{color:#F59E0B}
+.trial{font-size:.72rem;color:#F59E0B;margin-top:2px}
+.amt{font-weight:700;font-variant-numeric:tabular-nums}
+.per{font-size:.68rem;color:rgba(255,255,255,.5);text-align:right}
+.del{font-family:'Instrument Serif',Georgia,serif;font-style:italic;background:none;border:0;color:rgba(255,255,255,.45);cursor:pointer;font-size:.92rem;padding:6px}
+.del.sure{color:#f0a5a5}
+.empty{text-align:center;padding:26px 10px}
+.empty p{font-family:'Instrument Serif',Georgia,serif;font-size:1.15rem;color:rgba(255,255,255,.7)}
+.crow{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid rgba(255,255,255,.08);font-size:.88rem}
+.crow:last-child{border-bottom:0}
+.crow .when{color:rgba(255,255,255,.5);font-size:.75rem;min-width:110px}
+.crow .when.hot{color:#F59E0B}
+.crow .cn{flex:1}
+.crow .ca{font-weight:600;font-variant-numeric:tabular-nums}
+</style>
+<div class="wrap">
+  <h1>My subscriptions</h1>
+  <p class="sub">Everything that auto-renews, one screen.</p>
+
+  <div class="card">
+    <div class="lbl">Costs me per month</div>
+    <div class="big" id="mo">$0.00<small> / mo</small></div>
+    <div class="yr" id="yr"></div>
+  </div>
+
+  <div id="warns"></div>
+
+  <div class="card" id="coming" style="display:none">
+    <div class="lbl">Coming up · next 30 days</div>
+    <div id="clist"></div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Add a subscription</div>
+    <form id="f">
+      <input id="n" placeholder="Service (Netflix, gym...)" required>
+      <input id="a" type="number" step="0.01" min="0.01" placeholder="Price" required>
+      <select id="p"><option value="monthly">Monthly</option><option value="yearly">Yearly</option><option value="weekly">Weekly</option></select>
+      <input id="d" type="date" title="Next renewal date">
+      <input id="t" type="date" title="Free trial ends (optional)" style="grid-column:1/-1">
+      <button class="add" type="submit">Add it</button>
+    </form>
+  </div>
+
+  <div class="card" id="listcard">
+    <div class="lbl">The list</div>
+    <div id="list"></div>
+    <div class="empty" id="empty" style="display:none"><p>Nothing here yet. Add the first one above.</p></div>
+  </div>
+</div>
+<script>
+const KEY='subs.base.v1', DAY=86400000;
+let subs=JSON.parse(localStorage.getItem(KEY)||'[]');
+let sureId=null;
+const save=()=>localStorage.setItem(KEY,JSON.stringify(subs));
+const money=v=>'$'+(Math.round(v*100)/100).toLocaleString('en-US',{minimumFractionDigits:2});
+const perMonth=s=>s.period==='yearly'?s.amount/12:s.period==='weekly'?s.amount*52/12:s.amount;
+function parseD(iso){ if(!iso)return null; const[x,y,z]=iso.split('-').map(Number); const d=new Date(x,y-1,z); return isNaN(d)?null:d; }
+function today0(){ const n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()); }
+function nextRenewal(s){ const d=parseD(s.renewal); if(!d)return null; let i=0;
+  while(d<today0()&&i++<600){ if(s.period==='weekly')d.setDate(d.getDate()+7); else if(s.period==='yearly')d.setFullYear(d.getFullYear()+1); else d.setMonth(d.getMonth()+1); } return d; }
+const days=d=>Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-today0())/DAY);
+const when=n=>n===0?'today':n===1?'tomorrow':'in '+n+'d';
+const fmt=d=>d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function render(){
+  const total=subs.reduce((t,s)=>t+perMonth(s),0);
+  document.getElementById('mo').innerHTML=money(total)+'<small> / mo</small>';
+  document.getElementById('yr').textContent=total>0?'that is '+money(total*12)+' a year':'';
+  // warnings: trials ending within 14 days
+  const w=[];
+  for(const s of subs){ const t=parseD(s.trial); if(t){ const n=days(t); if(n>=0&&n<=14) w.push('<div class="warn"><b>'+esc(s.name)+'</b> free trial ends '+when(n)+'. Cancel before it charges you.</div>'); } }
+  document.getElementById('warns').innerHTML=w.join('');
+  // coming up
+  const bills=subs.map(s=>{const nx=nextRenewal(s); return nx&&{s,nx,n:days(nx)};}).filter(b=>b&&b.n>=0&&b.n<=30).sort((a,b)=>a.n-b.n);
+  document.getElementById('coming').style.display=bills.length?'block':'none';
+  document.getElementById('clist').innerHTML=bills.map(b=>'<div class="crow"><span class="when'+(b.n<=5?' hot':'')+'">'+when(b.n)+' · '+fmt(b.nx)+'</span><span class="cn">'+esc(b.s.name)+'</span><span class="ca">'+money(b.s.amount)+'</span></div>').join('');
+  // list
+  document.getElementById('empty').style.display=subs.length?'none':'block';
+  document.getElementById('list').innerHTML=subs.map(s=>{
+    const nx=nextRenewal(s), n=nx?days(nx):null, urgent=n!=null&&n<=5;
+    const tr=parseD(s.trial), tn=tr?days(tr):null;
+    return '<div class="row'+(urgent?' urgent':'')+'"><div style="flex:1;min-width:0"><div class="nm">'+esc(s.name)+'</div>'+
+      '<div class="meta">'+s.period+(nx?' · <span class="due">renews '+when(n)+' · '+fmt(nx)+'</span>':'')+'</div>'+
+      (tn!=null&&tn>=0&&tn<=14?'<div class="trial">trial ends '+when(tn)+'</div>':'')+
+      '</div><div><div class="amt">'+money(perMonth(s))+'</div><div class="per">/ month</div></div>'+
+      '<button class="del'+(sureId===s.id?' sure':'')+'" data-id="'+s.id+'">'+(sureId===s.id?'sure?':'delete')+'</button></div>';
+  }).join('');
+}
+document.getElementById('f').addEventListener('submit',e=>{
+  e.preventDefault();
+  const n=document.getElementById('n').value.trim(), a=parseFloat(document.getElementById('a').value);
+  if(!n||!isFinite(a)||a<=0)return;
+  subs.push({id:Date.now()+''+Math.random().toString(36).slice(2,6),name:n,amount:a,period:document.getElementById('p').value,renewal:document.getElementById('d').value||null,trial:document.getElementById('t').value||null});
+  e.target.reset(); save(); render();
+});
+document.getElementById('list').addEventListener('click',e=>{
+  const b=e.target.closest('.del'); if(!b)return;
+  if(sureId===b.dataset.id){ subs=subs.filter(x=>x.id!==sureId); sureId=null; save(); }
+  else { sureId=b.dataset.id; setTimeout(()=>{ if(sureId===b.dataset.id){sureId=null;render();} },3000); }
+  render();
+});
+render();
+</script>
